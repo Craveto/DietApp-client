@@ -9,7 +9,9 @@ function Navbar() {
 
   return (
     <nav className="navbar">
-      <h2 className="logo">DietApp</h2>
+      <h2 className="logo">
+        <Link to="/" onClick={() => setMenuOpen(false)}> DietApp </Link>
+      </h2>
 
       {/* Hamburger Icon */}
       <div
