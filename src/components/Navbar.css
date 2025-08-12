@@ -54,6 +54,11 @@
     display: flex;
   }
 
+  .navbar {
+  padding: 12px 22px;
+  
+}
+
   .nav-links {
     position: absolute;
     top: 60px;
