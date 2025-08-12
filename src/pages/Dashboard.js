@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/clerk-react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
+import MealPlanPreview from "../components/MealPlanPreview";
+import WorkoutPlanPreview from "../components/WorkoutPlanPreview";
+import ProgressChart from "../components/ProgressChart";
 import "./Dashboard.css";
 
 function Dashboard() {
@@ -11,14 +14,13 @@ function Dashboard() {
 
   const API_BASE = process.env.REACT_APP_API_BASE_URL;
 
-  // Fetch user preferences
   useEffect(() => {
     const fetchPreferences = async () => {
       try {
         const res = await axios.get(`${API_BASE}/api/profile/${user.id}`);
         if (res.data) {
           setPreferences(res.data);
-          generateDietPlan(res.data); // Generate plan when preferences load
+          generateDietPlan(res.data);
         }
       } catch (error) {
         console.error(error);
@@ -27,7 +29,6 @@ function Dashboard() {
     if (user) fetchPreferences();
   }, [user]);
 
-  // Generate diet plan based on preferences
   const generateDietPlan = (prefs) => {
     if (!prefs) return;
 
@@ -58,28 +59,32 @@ function Dashboard() {
       <div className="dashboard-container">
         {preferences ? (
           <>
-            <h2>Hi {user.firstName || user.fullName},</h2>
-            <p>
-              Goal: <strong>{preferences.goal.replace("_", " ")}</strong> | Diet:{" "}
-              <strong>{preferences.dietType}</strong>
-            </p>
+            {/* Quick Stats Section */}
+            <section className="quick-stats">
+              <h2>Hi {user.firstName || user.fullName},</h2>
+              <p>
+                Goal: <strong>{preferences.goal.replace("_", " ")}</strong> | Diet:{" "}
+                <strong>{preferences.dietType}</strong>
+              </p>
+            </section>
 
-            <div className="diet-plan">
+            {/* Meal Plan Preview */}
+            <section className="dashboard-section">
               <h3>Your Daily Diet Plan</h3>
-              {dietPlan.length > 0 ? (
-                <div className="diet-cards">
-                  {dietPlan.map((item, index) => (
-                    <div className="diet-card" key={index}>
-                      <h4>{item.meal}</h4>
-                      <p>{item.food}</p>
-                      <span>{item.calories} kcal</span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p>No plan available. Please update your preferences.</p>
-              )}
-            </div>
+              <MealPlanPreview dietPlan={dietPlan} />
+            </section>
+
+            {/* Workout Plan Preview */}
+            <section className="dashboard-section">
+              <h3>Suggested Workouts</h3>
+              <WorkoutPlanPreview />
+            </section>
+
+            {/* Progress Tracking */}
+            <section className="dashboard-section">
+              <h3>Your Progress</h3>
+              <ProgressChart />
+            </section>
           </>
         ) : (
           <p className="loading">Loading your preferences...</p>
