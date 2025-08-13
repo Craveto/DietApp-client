@@ -1,7 +1,11 @@
 import { useState } from "react";
-import axios from "axios";
+import { useUser } from "@clerk/clerk-react";
+import { saveMealPlan } from "../services/mealService"; // Import from mealService.js
 
-export default function AddMealPlan({ userId }) {
+export default function AddMealPlan() {
+  const { user } = useUser();
+  const userId = user?.id;
+
   const [meals, setMeals] = useState([{ meal: "", food: "", calories: "" }]);
 
   const handleChange = (index, field, value) => {
@@ -14,9 +18,17 @@ export default function AddMealPlan({ userId }) {
     setMeals([...meals, { meal: "", food: "", calories: "" }]);
   };
 
-  const saveMealPlan = async () => {
-    await axios.post(`/api/dashboard/meals/${userId}`, { meals });
-    alert("Meal plan saved!");
+  const handleSave = async () => {
+    if (!userId) {
+      alert("Please log in first");
+      return;
+    }
+    try {
+      await saveMealPlan(userId, meals); // Call service function
+      alert("Meal plan saved!");
+    } catch {
+      alert("Error saving meal plan");
+    }
   };
 
   return (
@@ -43,7 +55,7 @@ export default function AddMealPlan({ userId }) {
         </div>
       ))}
       <button onClick={addMealRow}>+ Add Another Meal</button>
-      <button onClick={saveMealPlan}>Save</button>
+      <button onClick={handleSave}>Save</button>
     </div>
   );
 }

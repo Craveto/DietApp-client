@@ -8,8 +8,11 @@
   position: relative;
 }
 
-.logo {
+.logo a {
   font-size: 1.5rem;
+  color: white;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .nav-links {
@@ -29,7 +32,7 @@
 }
 
 .nav-links button:hover,
-.nav-links a:hover {
+.nav-links a:hover, .logo:hover {
   text-decoration: underline;
 }
 
