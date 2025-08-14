@@ -54,8 +54,8 @@
 
 /* Quick stats header */
 .quick-stats {
-  background: linear-gradient(135deg, #6c63ff, #4a47a3);
-  color: white;
+  background: linear-gradient(135deg, #599c6b, #47a38e);
+  color: aliceblue;
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
