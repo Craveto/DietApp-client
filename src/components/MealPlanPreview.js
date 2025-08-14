@@ -6,6 +6,8 @@ import { useUser } from "@clerk/clerk-react";
 const MealPlanPreview = () => {
   const { user } = useUser();
   const [meals, setMeals] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [formMeals, setFormMeals] = useState([{ meal: "", food: "", calories: "" }]);
 
   useEffect(() => {
     if (!user) return;
@@ -23,18 +25,24 @@ const MealPlanPreview = () => {
     }
   };
 
-  const addMealPlan = async () => {
-    try {
-      // ✅ match backend schema: meal + food + calories
-      const sampleMeals = [
-        { meal: "Lunch", food: "Salad", calories: 150 },
-        { meal: "Dinner", food: "Grilled Chicken", calories: 300 },
-      ];
+  const handleMealChange = (index, field, value) => {
+    const updated = [...formMeals];
+    updated[index][field] = value;
+    setFormMeals(updated);
+  };
 
+  const addMealRow = () => {
+    setFormMeals([...formMeals, { meal: "", food: "", calories: "" }]);
+  };
+
+  const submitMealPlan = async () => {
+    try {
       await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/api/dashboard/meals/${user.id}`,
-        { meals: sampleMeals }
+        { meals: formMeals }
       );
+      setShowModal(false);
+      setFormMeals([{ meal: "", food: "", calories: "" }]);
       fetchMeals();
     } catch (err) {
       console.error("Error adding meals:", err);
@@ -58,21 +66,56 @@ const MealPlanPreview = () => {
       {meals.length === 0 ? (
         <p>No meals planned yet.</p>
       ) : (
-        <ul>
+        <ul className="meal-list">
           {meals.map((meal, idx) => (
-            <li key={idx}>
+            <li key={idx} className="meal-item">
               <strong>{meal.meal}</strong> — {meal.food} ({meal.calories} kcal)
             </li>
           ))}
         </ul>
       )}
 
-      <div style={{ marginTop: "1rem" }}>
-        <button onClick={addMealPlan}>Add Meal Plan</button>
-        <button onClick={deleteMealPlan} style={{ marginLeft: "10px" }}>
-          Delete Meal Plan
-        </button>
+      <div className="action-buttons">
+        <button className="btn-primary" onClick={() => setShowModal(true)}>Add Meal Plan</button>
+        <button className="btn-danger" onClick={deleteMealPlan}>Delete Meal Plan</button>
       </div>
+
+      {showModal && (
+        <div className="modal-backdrop">
+          <div className="modal">
+            <h3>Add Meal Plan</h3>
+            {formMeals.map((m, idx) => (
+              <div key={idx} className="meal-input-row">
+                <input
+                  type="text"
+                  placeholder="Meal (e.g., Lunch)"
+                  value={m.meal}
+                  onChange={(e) => handleMealChange(idx, "meal", e.target.value)}
+                />
+                <input
+                  type="text"
+                  placeholder="Food (e.g., Salad)"
+                  value={m.food}
+                  onChange={(e) => handleMealChange(idx, "food", e.target.value)}
+                />
+                <input
+                  type="number"
+                  placeholder="Calories"
+                  value={m.calories}
+                  onChange={(e) => handleMealChange(idx, "calories", e.target.value)}
+                />
+              </div>
+            ))}
+            <button className="btn-secondary" onClick={addMealRow}>
+              + Add Another Meal
+            </button>
+            <div className="modal-actions">
+              <button className="btn-primary" onClick={submitMealPlan}>Save</button>
+              <button className="btn-danger" onClick={() => setShowModal(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
