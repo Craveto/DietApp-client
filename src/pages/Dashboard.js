@@ -6,7 +6,7 @@ import MealPlanPreview from "../components/MealPlanPreview";
 import WorkoutPlanPreview from "../components/WorkoutPlanPreview";
 import ProgressChart from "../components/ProgressChart";
 import "./Dashboard.css";
-import AddMealPlan from "../components/AddMealPlan";
+
 // import QuickSummary from "../components/QuickSummary";
 
 function Dashboard() {
@@ -74,7 +74,7 @@ function Dashboard() {
             <section className="dashboard-section">
               <h3>Your Daily Diet Plan</h3>
               <MealPlanPreview dietPlan={dietPlan} />
-              <AddMealPlan />
+              
             </section>
 
             {/* Workout Plan Preview */}

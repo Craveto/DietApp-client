@@ -1,12 +1,15 @@
 // client/src/services/mealService.js
 import axios from "axios";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL ||(process.env.NODE_ENV === "production"
+    ? "REACT_APP_API_BASE_URL"
+    : "http://localhost:5000");
+
 
 // Save or update meal plan
 export const saveMealPlan = async (userId, meals) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/meals/${userId}`, { meals });
+    const response = await axios.post(`${API_BASE_URL}/api/dashboard/meals/${userId}`, { meals });
     return response.data;
   } catch (error) {
     console.error("Error saving meal plan:", error);
@@ -17,7 +20,7 @@ export const saveMealPlan = async (userId, meals) => {
 // Get meal plan
 export const getMealPlan = async (userId) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/meals/${userId}`);
+    const response = await axios.get(`${API_BASE_URL}/api/dashboard/meals/${userId}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching meal plan:", error);
